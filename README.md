@@ -3,4 +3,4 @@
 ***
 Scraping of a library shop
 ***
-Just launch script and follow instructions ;-)
+Just launch script ;-)
