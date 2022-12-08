@@ -1,14 +1,15 @@
+import csv
 import requests
 from bs4 import BeautifulSoup
 
-## URL=input("Wich URL to scrap ? : [ENTER] = http://books.toscrape.com/catalogue/set-me-free_988/]")
-## if URL == "":
-##     URL ="http://books.toscrape.com/catalogue/set-me-free_988/"
-URL ="http://books.toscrape.com/catalogue/set-me-free_988/"
+## product_page_url=input("Wich URL to scrap ? : [ENTER] = http://books.toscrape.com/catalogue/set-me-free_988/]")
+## if product_page_url == "":
+##     product_page_url ="http://books.toscrape.com/catalogue/set-me-free_988/"
+product_page_url ="http://books.toscrape.com/catalogue/set-me-free_988/"
 
-page = requests.get(URL)
+page = requests.get(product_page_url)
 
-print("Requesting URL " + URL)
+print("Requesting URL " + product_page_url)
 
 if page.status_code != 200:
     print("Unable to access to the server, please check URL")
@@ -36,11 +37,11 @@ ahref = soup.find_all("a")
 
 
 # product_page_url
-print("Product page URL : " + URL)
+print("Product page URL : " + product_page_url)
 
 # universal_product_code(upc)
-upc = (td[0].string)
-print("UPC : " + upc)
+universal_product_code = (td[0].string)
+print("UPC : " + universal_product_code)
 
 # title
 ## title stored on the first class active found
@@ -49,32 +50,32 @@ title = (title.string)
 print("Title : " + title)
 
 # price_including_tax
-pit = (td[3].string)
-print("Price including tax : " + pit)
+price_including_tax = (td[3].string)
+print("Price including tax : " + price_including_tax)
 
 # price_excluding_tax
-pet = (td[2].string)
-print("Price excluding tax : " + pet)
+price_excluding_tax = (td[2].string)
+print("Price excluding tax : " + price_excluding_tax)
 
 # number_available
-available = (td[5].string)
-print("Number available : " + available)
+number_available = (td[5].string)
+print("Number available : " + number_available)
 
 # product_description
 desc = str(soup.find("meta", attrs={"name":"description"}))
-desc=desc[20:-31]
-print("Description : " + desc)
+product_description=desc[20:-31]
+print("Description : " + product_description)
 
 # category
 ## looking for "category/books/" on ahref list
 for cat in ahref:
     if "category/books/" in str(cat):
-        cat = cat.string
-        print("Category : " + cat)
+        category = cat.string
+        print("Category : " + category)
 
 # review_rating
-rating = (td[6].string)
-print("Review rating : " + rating)
+review_rating = (td[6].string)
+print("Review rating : " + review_rating)
 
 # image_url
 ## find class item active (only one on all the html)
@@ -82,6 +83,16 @@ print("Review rating : " + rating)
 image = str(soup.find(class_="item active"))
 pos1 = image.find("../../") + 6
 pos2 = image.find("jpg",pos1) + 3
-subString = ("http://books.toscrape.com/" + (image[pos1 : pos2]))
-print("Image URL : " + subString)
+image_url = ("http://books.toscrape.com/" + (image[pos1 : pos2]))
+print("Image URL : " + image_url)
 
+########## Creation of the CSV file ##########
+
+header = ["product_page_url","universal_ product_code (upc)","title","price_including_tax","price_excluding_tax","number_available","product_description","category","review_rating","image_url"]
+
+with open("book_to_scrape.csv","w", newline='') as csv_file:
+    writer = csv.writer(csv_file, delimiter=",")
+    writer.writerow(header)
+    line=[product_page_url,universal_product_code,title,price_including_tax,price_excluding_tax,number_available,product_description,category,review_rating,image_url]
+    writer.writerow(line)
+    writer.writerow(line)
