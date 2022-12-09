@@ -1,4 +1,3 @@
-import csv
 import requests
 from bs4 import BeautifulSoup
 
@@ -18,28 +17,46 @@ else:
 main_page_soup = BeautifulSoup(main_page.content, 'html.parser')
 
 main_category = []
+main_url_category =  []
+
 main_li = main_page_soup.find_all("li")
 for li in main_li:
-    if "category" in str(li):
+    if "category" in str(li) and not "books_1" in str(li):
+        # extraction of the category
         pos1 = str(li).find("                                ") + 32
         pos2 = str(li).find("\n", pos1)
         cat = (str(li)[pos1:pos2]).capitalize()
         main_category.append(cat)
+        # extraction of the URL of this category
+        pos1 = str(li).find("href") + 6
+        pos2 = str(li).find(".html") + 5
+        url_cat = "http://books.toscrape.com/" + (str(li)[pos1:pos2])
+        main_url_category.append(url_cat)
 
 print(main_category)
+print(main_url_category)
 
 
-exit()
-
+cat_choice = ""
+index = -1
+test = len(main_category)
+while cat_choice.upper() != "S":
+    index += 1
+    cat_choice = input("Analyser categorie " + main_category[index] + "? ([ENTER] pour suivante ou (s)electionner celle ci)")
+    # if all category listed, back to the first + warning
+    if index == len(main_category) - 1:
+        print("Vous avez fait le tour de toutes les categories, retour à la première!")
+        index = -1
 
 ## product_page_url=input("Wich URL to scrap ? : [ENTER] = http://books.toscrape.com/catalogue/set-me-free_988/]")
 ## if product_page_url == "":
 ##     product_page_url ="http://books.toscrape.com/catalogue/set-me-free_988/"
-product_page_url ="http://books.toscrape.com/catalogue/set-me-free_988/"
+# product_page_url ="http://books.toscrape.com/catalogue/set-me-free_988/"
+products_page_url = main_url_category[index]
 
-page = requests.get(product_page_url)
+page = requests.get(products_page_url)
 
-print("Requesting URL " + product_page_url)
+print("Requesting URL " + products_page_url)
 
 if page.status_code != 200:
     print("Unable to access to the server, please check URL")
@@ -48,6 +65,12 @@ else:
     print("Server access OK")
 
 soup = BeautifulSoup(page.content, 'html.parser')
+
+########## URL of products extraction ##########
+
+
+
+exit()
 
 ########## Data extraction ##########
 
