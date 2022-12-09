@@ -2,6 +2,36 @@ import csv
 import requests
 from bs4 import BeautifulSoup
 
+########## Category choice ##########
+
+main_url = "http://books.toscrape.com/"
+main_page = requests.get(main_url)
+
+print("Requesting URL " + main_url)
+
+if main_page.status_code != 200:
+    print("Unable to access to the server, please check URL")
+    exit()
+else:
+    print("Server access OK")
+
+main_page_soup = BeautifulSoup(main_page.content, 'html.parser')
+
+main_category = []
+main_li = main_page_soup.find_all("li")
+for li in main_li:
+    if "category" in str(li):
+        pos1 = str(li).find("                                ") + 32
+        pos2 = str(li).find("\n", pos1)
+        cat = (str(li)[pos1:pos2]).capitalize()
+        main_category.append(cat)
+
+print(main_category)
+
+
+exit()
+
+
 ## product_page_url=input("Wich URL to scrap ? : [ENTER] = http://books.toscrape.com/catalogue/set-me-free_988/]")
 ## if product_page_url == "":
 ##     product_page_url ="http://books.toscrape.com/catalogue/set-me-free_988/"
@@ -29,7 +59,7 @@ soup = BeautifulSoup(page.content, 'html.parser')
 ## [5] number of books available
 td = soup.find_all('td')
 
-## values for a href will be used 2 times
+## values for a href will be used twice
 ## so I declared "globally"
 ahref = soup.find_all("a")
 
@@ -96,3 +126,4 @@ with open("book_to_scrape.csv","w", newline='') as csv_file:
     line=[product_page_url,universal_product_code,title,price_including_tax,price_excluding_tax,number_available,product_description,category,review_rating,image_url]
     writer.writerow(line)
     writer.writerow(line)
+
