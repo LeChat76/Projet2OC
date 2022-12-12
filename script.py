@@ -17,7 +17,7 @@ else:
 
 main_page_soup = BeautifulSoup(main_page.content, 'html.parser')
 
-main_category = []
+main_categories = []
 main_url_category =  []
 
 main_li = main_page_soup.find_all("li")
@@ -27,7 +27,7 @@ for li in main_li:
         pos1 = str(li).find("                                ") + 32
         pos2 = str(li).find("\n", pos1)
         cat = (str(li)[pos1:pos2]).capitalize()
-        main_category.append(cat)
+        main_categories.append(cat)
         # extraction of the URL of this category
         pos1 = str(li).find("href") + 6
         pos2 = str(li).find(".html") + 5
@@ -36,12 +36,12 @@ for li in main_li:
 
 cat_choice = ""
 index = -1
-test = len(main_category)
-while cat_choice.upper() != "S":
+test = len(main_categories)
+while cat_choice.upper() != "S" and "T":
     index += 1
-    cat_choice = input("Analyser categorie " + main_category[index] + "? ([ENTER] pour suivante ou (s)electionner celle ci)")
+    cat_choice = input("Analyser categorie " + main_categories[index] + " ([ENTER] pour suivante, (s)electionner celle ci ou (t)outes)?")
     # if all categories listed, back to the first + warning
-    if index == len(main_category) - 1:
+    if index == len(main_categories):
         print("\nVous avez fait le tour de toutes les categories, retour à la première!\n")
         index = -1
 
@@ -71,13 +71,19 @@ for url in products_url:
     list_products_url.append(product_url)
 
 header = ["product_page_url","universal_product_code (upc)","title","price_including_tax","price_excluding_tax","number_available","product_description","category","review_rating","image_url"]
+
+try:
+    test_opening_csv = open("book_to_scrape.csv","w")
+except IOError:
+    print("\nErreur lors de la creation du fichier.\nEst il déjà ouvert? Avez vous les droits de création?")
+    exit()
+
 with open("book_to_scrape.csv","w", newline='') as csv_file:
     writer = csv.writer(csv_file, delimiter=",")
     writer.writerow(header)
 
-    for book_url in list_products_url:
+    for product_page_url in list_products_url:
 
-        product_page_url = book_url
         page = requests.get(product_page_url)
         soup = BeautifulSoup(page.content, 'html.parser')
 
@@ -99,28 +105,28 @@ with open("book_to_scrape.csv","w", newline='') as csv_file:
 
         # universal_product_code(upc)
         universal_product_code = (td[0].string)
-        # print("UPC : " + universal_product_code)
 
         # title
         ## title stored on the first class active found
         title = (soup.find("li", class_="active"))
         title = (title.string)
-        # print("Title : " + title)
 
         # price_including_tax
         price_including_tax = (td[3].string)
-        # print("Price including tax : " + price_including_tax)
 
         # price_excluding_tax
         price_excluding_tax = (td[2].string)
-        # print("Price excluding tax : " + price_excluding_tax)
 
         # number_available
         number_available = (td[5].string)
-        # print("Number available : " + number_available)
+        number_available = (number_available.replace("In stock (","")).replace(" available)", "")
+        #number_available.replace(" available(", "")
+
 
         # product_description
-        desc = str(soup.find("meta", attrs={"name":"description"}))
+        desc = soup.find("meta", attrs={"name":"description"})
+        # ";" removing for opening CSV
+        desc=(str(desc).replace("&quot;","")).replace(";",",")
         product_description=desc[20:-31]
         # print("Description : " + product_description)
 
