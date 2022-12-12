@@ -106,7 +106,7 @@ for m in range(nb_cat):
     header = ["product_page_url", "universal_product_code (upc)", "title", "price_including_tax", "price_excluding_tax",
               "number_available", "product_description", "category", "review_rating", "image_url"]
 
-    with open("book_to_scrape_" + main_categories[index] + ".csv","w", newline='') as csv_file:
+    with open("book_to_scrape_" + main_categories[index] + ".csv","w", newline='',encoding="utf-8") as csv_file:
         writer = csv.writer(csv_file, delimiter=",")
         writer.writerow(header)
 
@@ -176,7 +176,7 @@ for m in range(nb_cat):
 
             # downloading image file
             img = requests.get(image_url, stream = True)
-            title = title.replace(":"," ").replace("'"," ") # replace special caracters incompatible with name file
+            title = title.replace(":"," ").replace("'"," ").replace("*",".") # replace special caracters incompatible with name file
             image_ext = image_url[-4:] # to keep the same extension
             with open(title + image_ext, 'wb') as img_file:
                 shutil.copyfileobj(img.raw, img_file)
