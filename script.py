@@ -129,7 +129,7 @@ for m in range(nb_cat):
     header = ["product_page_url", "universal_product_code (upc)", "title", "price_including_tax", "price_excluding_tax",
               "number_available", "product_description", "category", "review_rating", "image_url"]
 
-    with open(main_categories[index] + r"\book_to_scrape_" + main_categories[index] + ".csv","w", newline='',encoding="utf-8") as csv_file:
+    with open(main_categories[index] + r"\book_to_scrape_" + main_categories[index] + ".csv","w", newline='',encoding="utf-32") as csv_file:
         writer = csv.writer(csv_file, delimiter=",")
         writer.writerow(header)
 
