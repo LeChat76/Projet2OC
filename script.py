@@ -9,12 +9,15 @@ products_url[] = list of products
 product_url = URL of one book
 list_products_url[] = list of products
 product_page_url = URL of one book
+nb_cat = choice of one category or all
+pages = nb of page per category
 '''
 
 import csv
 import requests
 from bs4 import BeautifulSoup
 import shutil
+import os
 
 #####################################
 ########## Category choice ##########
@@ -72,33 +75,53 @@ else:
 
 for m in range(nb_cat):
 
+    pages = 1
+
+    list_products_url = []
+    next_category_page_url = ""
     category_page_url = main_url_categories[index]
 
     page = requests.get(category_page_url)
 
     print("Requesting URL " + category_page_url)
 
-    if page.status_code != 200:
-        print("Serveur injoignable")
-        exit()
-    else:
-        print("Acces serveur OK")
+    while page.status_code == 200:
 
-    soup = BeautifulSoup(page.content, 'html.parser')
+        if next_category_page_url:
+            print("Requesting URL " + next_category_page_url)
 
-    products_url = soup.find_all("h3")
+        if page.status_code != 200:
+            print("Serveur injoignable")
+            exit()
+        else:
+            print("Acces serveur OK")
 
-    list_products_url = []
-    for url in products_url:
-        pos1 = str(url).find("../../") + 9
-        pos2 = str(url).find("index.html", pos1)
-        product_url = ("http://books.toscrape.com/catalogue/" + str(url)[pos1: pos2])
-        list_products_url.append(product_url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+
+        products_url = soup.find_all("h3")
+
+        for url in products_url:
+            pos1 = str(url).find("../../") + 9
+            pos2 = str(url).find("index.html", pos1)
+            product_url = ("http://books.toscrape.com/catalogue/" + str(url)[pos1: pos2])
+            list_products_url.append(product_url)
+
+        ########## test if next page exists ##########
+
+        pages += 1
+        next_category_page_url = category_page_url.replace("index.html","page-" + str(pages) + ".html")
+        page = requests.get(next_category_page_url)
+
 
     ########## opening CSV file ##########
 
+    if not os.path.exists(main_categories[index]):
+        os.makedirs(main_categories[index])
+
     try:
-        test_opening_csv = open("book_to_scrape_" + main_categories[index] + ".csv","w")
+        test = main_categories[index] + r"\book_to_scrape_" + main_categories[index] + ".csv"
+        test_opening_csv = open(test,"w")
+        #test_opening_csv = open(main_categories[index] + r"\book_to_scrape_" + main_categories[index] + ".csv","w")
     except IOError:
         print("\nErreur lors de la creation du fichier.\nEst il déjà ouvert? Avez vous les droits de création?")
         exit()
@@ -106,7 +129,7 @@ for m in range(nb_cat):
     header = ["product_page_url", "universal_product_code (upc)", "title", "price_including_tax", "price_excluding_tax",
               "number_available", "product_description", "category", "review_rating", "image_url"]
 
-    with open("book_to_scrape_" + main_categories[index] + ".csv","w", newline='',encoding="utf-8") as csv_file:
+    with open(main_categories[index] + r"\book_to_scrape_" + main_categories[index] + ".csv","w", newline='',encoding="utf-8") as csv_file:
         writer = csv.writer(csv_file, delimiter=",")
         writer.writerow(header)
 
@@ -130,6 +153,7 @@ for m in range(nb_cat):
             ahref = soup.find_all("a")
 
             # product_page_url
+            # alreay known, stored in product_page_url
 
             # universal_product_code(upc)
             universal_product_code = (td[0].string)
@@ -148,8 +172,6 @@ for m in range(nb_cat):
             # number_available
             number_available = (td[5].string)
             number_available = (number_available.replace("In stock (","")).replace(" available)", "")
-            #number_available.replace(" available(", "")
-
 
             # product_description
             desc = soup.find("meta", attrs={"name":"description"})
@@ -158,10 +180,8 @@ for m in range(nb_cat):
             product_description=desc[20:-31]
 
             # category
+            # alreay known, stored in main_categories[index]
             ## looking for "category/books/" on ahref list
-            for cat in ahref:
-                if "category/books/" in str(cat):
-                    category = cat.string
 
             # review_rating
             review_rating = (td[6].string)
@@ -176,12 +196,14 @@ for m in range(nb_cat):
 
             # downloading image file
             img = requests.get(image_url, stream = True)
-            title = title.replace(":"," ").replace("'"," ").replace("*",".") # replace special caracters incompatible with name file
+            title = title.replace(":"," ").replace("'"," ").replace("*",".").replace("/","-").replace('"','-').replace("?",".") # replace special caracters incompatible with name file
             image_ext = image_url[-4:] # to keep the same extension
-            with open(title + image_ext, 'wb') as img_file:
+            with open(main_categories[index] + "\\" + title + image_ext, 'wb') as img_file:
                 shutil.copyfileobj(img.raw, img_file)
+                img_file.close()
 
-            line=[product_page_url,universal_product_code,title,price_including_tax,price_excluding_tax,number_available,product_description,category,review_rating,image_url]
+
+            line=[product_page_url,universal_product_code,title,price_including_tax,price_excluding_tax,number_available,product_description,main_categories[index],review_rating,image_url]
             writer.writerow(line)
 
         csv_file.close()
