@@ -6,6 +6,6 @@
 ## **Installation of libraries needed :** *pip install -r requirements.txt*
 
 ## Just launch the script by typing "py script.py" and follow instructions displayed on screen (you can choose only one or all categories).
-## All downloads are organized in a folder named by the category.
+## All downloads are organized in a folder named by the category. 
 
 
