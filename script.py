@@ -18,6 +18,7 @@ import requests
 from bs4 import BeautifulSoup
 import shutil
 import os
+import datetime
 
 #####################################
 ########## Category choice ##########
@@ -107,29 +108,40 @@ for m in range(nb_cat):
             list_products_url.append(product_url)
 
         ########## test if next page exists ##########
+        ##########      first method        ##########
+        ## pages += 1
+        ## next_category_page_url = category_page_url.replace("index.html","page-" + str(pages) + ".html")
+        ## page = requests.get(next_category_page_url)
 
-        pages += 1
-        next_category_page_url = category_page_url.replace("index.html","page-" + str(pages) + ".html")
-        page = requests.get(next_category_page_url)
+        ##########      2nd method          ##########
+        next_category_page_name = str(soup.find("li", class_="next"))
+        if next_category_page_name != "None":
+            pos1 = next_category_page_name.find("href=") + 6
+            pos2 = next_category_page_name.find(">next") -1
+            next_category_page_name = next_category_page_name[pos1:pos2]
+            next_category_page_url = category_page_url.replace("index.html",next_category_page_name)
+            page = requests.get(next_category_page_url)
+        else:
+            page.status_code = 404
 
-
-    ########## opening CSV file ##########
-
+    ########## creating folder and opening CSV file ##########
+    now = datetime.datetime.now()
+    date_time = (now.strftime("%d%m%Y_%H%M%S"))
     if not os.path.exists(main_categories[index]):
         os.makedirs(main_categories[index])
 
     try:
-        test = main_categories[index] + r"\book_to_scrape_" + main_categories[index] + ".csv"
+        test = main_categories[index] + r"\book_to_scrape_" + main_categories[index]  + "_" + date_time + "_CSV.csv"
         test_opening_csv = open(test,"w")
-        #test_opening_csv = open(main_categories[index] + r"\book_to_scrape_" + main_categories[index] + ".csv","w")
+        test_opening_csv.close()
     except IOError:
-        print("\nErreur lors de la creation du fichier.\nEst il déjà ouvert? Avez vous les droits de création?")
+        print("\nErreur lors de la creation du fichier CSV pour la categorie " + main_categories[index] + ".\nEst il déjà ouvert? Avez vous les droits de création?")
         exit()
 
     header = ["product_page_url", "universal_product_code (upc)", "title", "price_including_tax", "price_excluding_tax",
               "number_available", "product_description", "category", "review_rating", "image_url"]
 
-    with open(main_categories[index] + r"\book_to_scrape_" + main_categories[index] + ".csv","w", newline='',encoding="utf-32") as csv_file:
+    with open(main_categories[index] + r"\book_to_scrape_" + main_categories[index] + "_" + date_time + "_CSV.csv","w", newline='',encoding="utf-32") as csv_file:
         writer = csv.writer(csv_file, delimiter=",")
         writer.writerow(header)
 
@@ -197,7 +209,7 @@ for m in range(nb_cat):
             # downloading image file
             img = requests.get(image_url, stream = True)
             title = title.replace(":"," ").replace("'"," ").replace("*",".").replace("/","-").replace('"','-').replace("?",".") # replace special caracters incompatible with name file
-            image_ext = image_url[-4:] # to keep the same extension
+            image_ext = image_url[-4:] # to keep the same extension in cas of other image format (bmp or other)
             with open(main_categories[index] + "\\" + title + image_ext, 'wb') as img_file:
                 shutil.copyfileobj(img.raw, img_file)
                 img_file.close()
@@ -210,5 +222,8 @@ for m in range(nb_cat):
 
     index += 1
 
-print("Fin de l'extraction, vous pouvez consulter les fichiers CSV")
+if nb_cat == 1:
+    print('''Fin de l'extraction, vous pouvez consulter le fichiers CSV horodaté à la date du jour dans le dossier "''' + main_categories[index] + '"\nainsi que les images de couvertures associées.')
+else:
+    print("Fin de l'extraction, vous pouvez consulter les fichiers CSV horodatés à la date du jour ainsi que les images \nde couvertures dans chaques dossiers categorie.")
 

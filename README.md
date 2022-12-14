@@ -1,11 +1,22 @@
-# Project 2 OpenClassRooms
-Author Cedric Delauney (cedric.delauney@gmail.com)
-Scraping of http://books.toscrape.com library shop
+# Scraping of http://books.toscrape.com library shop
+## _Project 2 OpenClassRooms_
+This script download all data stored in "Books to Scrape" e-shoop.
+## Installation
+```sh
+"git clone https://github.com/LeChat76/Projet2OC.git"
+Install all needed libraries by typing : "pip install -r requirements.txt"
+```
+## Execution
+```sh
+Simply launch the script by typing "py script.py" and follow instruction.
+```
+## Features
+- Select only one category or all
+- Create an folder for each category
+- All book cover downloaded on each folder category and named by the name of the book (easy way to find the good one)
+- timestamp of the extracted CSV in the file name (in that way by relaunching the script all old
+extraction are keeped in the folder)
 
-## **Installation :** *git clone https://github.com/LeChat76/Projet2OC.git*
-**Installation of libraries needed :** *pip install -r requirements.txt*
-
-## Just launch the script by typing "py script.py" and follow instructions displayed on screen (you can choose only one or all categories).
-All downloads are organized in a folder named by the category. 
-
-
+## Features to come
+ - Create an log file for each using
+ - Create a progress bar (when launching all categories it takes some times so I think it will be good to see where we are in the execution of the script)
