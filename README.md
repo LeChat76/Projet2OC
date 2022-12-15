@@ -12,10 +12,10 @@ Simply launch the script by typing "py script.py" and follow instruction.
 ```
 ## Features
 - Select only one category or all
-- Create an folder for each category
+- All data extracted to CSVs's folder
 - All book cover downloaded on each folder category and named by the name of the book (easy way to find the good one)
-- timestamp of the extracted CSV in the file name (in that way by relaunching the script all old
-extraction are keeped in the folder)
+- timestamp of the extracted CSV in the file name (in that way by relaunching the script all olds
+extractions are keeped in the folder)
 
 ## Features to come
  - Create an log file for each using

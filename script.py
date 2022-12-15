@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ############ Variables ############
 '''
 main_url = url main page of the site
@@ -127,12 +128,17 @@ for m in range(nb_cat):
     ########## creating folder and opening CSV file ##########
     now = datetime.datetime.now()
     date_time = (now.strftime("%d%m%Y_%H%M%S"))
-    if not os.path.exists(main_categories[index]):
-        os.makedirs(main_categories[index])
+    csv_folder = "CSVs"
+    img_folder = main_categories[index]
+    if not os.path.exists(img_folder):
+        os.makedirs(img_folder)
+    if not os.path.exists(csv_folder):
+        os.makedirs(csv_folder)
 
     try:
-        test = main_categories[index] + r"\book_to_scrape_" + main_categories[index]  + "_" + date_time + "_CSV.csv"
-        test_opening_csv = open(test,"w")
+        path_csv = os.path.join("CSVs",main_categories[index] + "_" + date_time + "_CSV.csv")
+        #test = "CSVs" + "\\" + main_categories[index]  + "_" + date_time + "_CSV.csv"
+        test_opening_csv = open(path_csv,"w")
         test_opening_csv.close()
     except IOError:
         print("\nErreur lors de la creation du fichier CSV pour la categorie " + main_categories[index] + ".\nEst il déjà ouvert? Avez vous les droits de création?")
@@ -141,7 +147,7 @@ for m in range(nb_cat):
     header = ["product_page_url", "universal_product_code (upc)", "title", "price_including_tax", "price_excluding_tax",
               "number_available", "product_description", "category", "review_rating", "image_url"]
 
-    with open(main_categories[index] + r"\book_to_scrape_" + main_categories[index] + "_" + date_time + "_CSV.csv","w", newline='',encoding="utf-32") as csv_file:
+    with open(path_csv,"w", newline='',encoding="utf-32") as csv_file:
         writer = csv.writer(csv_file, delimiter=",")
         writer.writerow(header)
 
@@ -208,9 +214,9 @@ for m in range(nb_cat):
 
             # downloading image file
             img = requests.get(image_url, stream = True)
-            title = title.replace(":"," ").replace("'"," ").replace("*",".").replace("/","-").replace('"','-').replace("?",".") # replace special caracters incompatible with name file
+            title = title.replace(":"," ").replace("'"," ").replace("*",".").replace("/","-").replace('"','-').replace("?",".").replace(","," ") # replace special caracters incompatible with name file
             image_ext = image_url[-4:] # to keep the same extension in cas of other image format (bmp or other)
-            with open(main_categories[index] + "\\" + title + image_ext, 'wb') as img_file:
+            with open(os.path.join(img_folder,title + image_ext), 'wb') as img_file:
                 shutil.copyfileobj(img.raw, img_file)
                 img_file.close()
 
@@ -223,7 +229,7 @@ for m in range(nb_cat):
     index += 1
 
 if nb_cat == 1:
-    print('''Fin de l'extraction, vous pouvez consulter le fichiers CSV horodaté à la date du jour dans le dossier "''' + main_categories[index] + '"\nainsi que les images de couvertures associées.')
+    print('''Fin de l'extraction, vous pouvez consulter le fichiers CSV horodaté à la date du jour dans le dossier CSVs\nainsi que les images de couvertures associées dans "''' + main_categories[index - 1] + '".')
 else:
     print("Fin de l'extraction, vous pouvez consulter les fichiers CSV horodatés à la date du jour ainsi que les images \nde couvertures dans chaques dossiers categorie.")
 
