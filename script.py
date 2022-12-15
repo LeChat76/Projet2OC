@@ -61,7 +61,7 @@ while cat_choice.upper() != "S" and cat_choice.upper() != "T":
     index += 1
     cat_choice = input("Analyser categorie " + main_categories[index] + " ([ENTER] pour suivante, (s)electionner celle ci ou (t)outes)?")
     # if all categories listed, back to the first + warning
-    if index == len(main_categories):
+    if index +1 == len(main_categories):
         print("\nVous avez fait le tour de toutes les categories, retour à la première!\n")
         index = -1
 
@@ -128,16 +128,15 @@ for m in range(nb_cat):
     ########## creating folder and opening CSV file ##########
     now = datetime.datetime.now()
     date_time = (now.strftime("%d%m%Y_%H%M%S"))
-    csv_folder = "CSVs"
-    img_folder = main_categories[index]
+    csv_folder = os.path.join("data","CSVs")
+    img_folder = os.path.join("data",main_categories[index])
     if not os.path.exists(img_folder):
         os.makedirs(img_folder)
     if not os.path.exists(csv_folder):
         os.makedirs(csv_folder)
 
     try:
-        path_csv = os.path.join("CSVs",main_categories[index] + "_" + date_time + "_CSV.csv")
-        #test = "CSVs" + "\\" + main_categories[index]  + "_" + date_time + "_CSV.csv"
+        path_csv = os.path.join(csv_folder,main_categories[index] + "_" + date_time + "_CSV.csv")
         test_opening_csv = open(path_csv,"w")
         test_opening_csv.close()
     except IOError:
@@ -230,6 +229,8 @@ for m in range(nb_cat):
 
 if nb_cat == 1:
     print('''Fin de l'extraction, vous pouvez consulter le fichiers CSV horodaté à la date du jour dans le dossier CSVs\nainsi que les images de couvertures associées dans "''' + main_categories[index - 1] + '".')
+    print("Temps de traitement : " + str(datetime.datetime.now() - now))
 else:
     print("Fin de l'extraction, vous pouvez consulter les fichiers CSV horodatés à la date du jour ainsi que les images \nde couvertures dans chaques dossiers categorie.")
+    print("Temps de traitement : " + str(datetime.datetime.now() - now))
 
