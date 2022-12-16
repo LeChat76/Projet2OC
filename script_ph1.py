@@ -14,7 +14,7 @@ def import_product_info(product_page_url, category, date_time):
 
     product_page = requests.get(product_page_url)
 
-    print("Requesting URL " + product_page_url)
+    print("Requesting URL ph1 " + product_page_url)
 
     if product_page.status_code != 200:
         print("Serveur injoignable")
@@ -91,4 +91,4 @@ def import_product_info(product_page_url, category, date_time):
 
         line = [product_page_url, universal_product_code, title, price_including_tax, price_excluding_tax, number_available, product_description, category, review_rating, image_url]
         writer.writerow(line)
-        csv_file.close()
+    csv_file.close()
