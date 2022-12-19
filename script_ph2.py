@@ -6,7 +6,6 @@ def import_all_products_infos_cat(main_categories):
     import requests
     from bs4 import BeautifulSoup
     import datetime
-    global main_url_category
 
     main_url = "http://books.toscrape.com/"
     main_page = requests.get(main_url)
@@ -39,12 +38,12 @@ def import_all_products_infos_cat(main_categories):
 
     page = requests.get(main_url_category)
 
-    print("Requesting URL ph2a " + main_url_category)
+    print("(ph2a) Requesting URL " + main_url_category)
 
     while page.status_code == 200:
 
         if next_category_page_url:
-            print("Requesting URL ph2b " + next_category_page_url)
+            print("(ph2b) Requesting URL " + next_category_page_url)
 
         if page.status_code != 200:
             print("Serveur injoignable")

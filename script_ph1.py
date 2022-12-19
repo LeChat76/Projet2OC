@@ -6,6 +6,7 @@ def import_product_info(product_page_url, category, date_time):
     from bs4 import BeautifulSoup
     import os
     import csv
+    from script_ph4 import download_img_product
 
     # category = "Travel"
     # product_page_url = "http://books.toscrape.com/catalogue/its-only-the-himalayas_981/index.html"
@@ -14,7 +15,7 @@ def import_product_info(product_page_url, category, date_time):
 
     product_page = requests.get(product_page_url)
 
-    print("Requesting URL ph1 " + product_page_url)
+    print("(ph1) Requesting URL " + product_page_url)
 
     if product_page.status_code != 200:
         print("Serveur injoignable")
@@ -92,3 +93,6 @@ def import_product_info(product_page_url, category, date_time):
         line = [product_page_url, universal_product_code, title, price_including_tax, price_excluding_tax, number_available, product_description, category, review_rating, image_url]
         writer.writerow(line)
     csv_file.close()
+
+    download_img_product(product_page_url, title, category)
+

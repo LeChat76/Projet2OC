@@ -34,12 +34,12 @@ if main_page.status_code != 200:
     print("Serveur injoignable")
     exit()
 else:
-    print("Acces serveur OK")
+    print("Accès serveur OK")
 
 main_page_soup = BeautifulSoup(main_page.content, 'html.parser')
 
 main_categories = []
-main_url_categories =  []
+main_url_categories = []
 
 main_li = main_page_soup.find_all("li")
 for li in main_li:
@@ -59,9 +59,9 @@ cat_choice = ""
 index = -1
 while cat_choice.upper() != "S" and cat_choice.upper() != "T":
     index += 1
-    cat_choice = input("Analyser categorie " + main_categories[index] + " ([ENTER] pour suivante, (s)electionner celle ci ou (t)outes)?")
+    cat_choice = input("Analyser catégorie " + main_categories[index] + " ([ENTER] pour suivante, (s)electionner celle ci ou (t)outes)?")
     # if all categories listed, back to the first + warning
-    if index +1 == len(main_categories):
+    if index + 1 == len(main_categories):
         print("\nVous avez fait le tour de toutes les categories, retour à la première!\n")
         index = -1
 
@@ -96,7 +96,7 @@ for m in range(nb_cat):
             print("Serveur injoignable")
             exit()
         else:
-            print("Acces serveur OK")
+            print("Accès serveur OK")
 
         soup = BeautifulSoup(page.content, 'html.parser')
 
@@ -118,9 +118,9 @@ for m in range(nb_cat):
         next_category_page_name = str(soup.find("li", class_="next"))
         if next_category_page_name != "None":
             pos1 = next_category_page_name.find("href=") + 6
-            pos2 = next_category_page_name.find(">next") -1
+            pos2 = next_category_page_name.find(">next") - 1
             next_category_page_name = next_category_page_name[pos1:pos2]
-            next_category_page_url = category_page_url.replace("index.html",next_category_page_name)
+            next_category_page_url = category_page_url.replace("index.html", next_category_page_name)
             page = requests.get(next_category_page_url)
         else:
             page.status_code = 404
@@ -128,16 +128,16 @@ for m in range(nb_cat):
     ########## creating folder and opening CSV file ##########
     now = datetime.datetime.now()
     date_time = (now.strftime("%d%m%Y_%H%M%S"))
-    csv_folder = os.path.join("data","CSVs")
-    img_folder = os.path.join("data",main_categories[index])
+    csv_folder = os.path.join("data", "CSVs")
+    img_folder = os.path.join("data", main_categories[index])
     if not os.path.exists(img_folder):
         os.makedirs(img_folder)
     if not os.path.exists(csv_folder):
         os.makedirs(csv_folder)
 
     try:
-        path_csv = os.path.join(csv_folder,main_categories[index] + "_" + date_time + "_CSV.csv")
-        test_opening_csv = open(path_csv,"w")
+        path_csv = os.path.join(csv_folder, main_categories[index] + "_" + date_time + "_CSV.csv")
+        test_opening_csv = open(path_csv, "w")
         test_opening_csv.close()
     except IOError:
         print("\nErreur lors de la creation du fichier CSV pour la categorie " + main_categories[index] + ".\nEst il déjà ouvert? Avez vous les droits de création?")
@@ -146,7 +146,7 @@ for m in range(nb_cat):
     header = ["product_page_url", "universal_product_code (upc)", "title", "price_including_tax", "price_excluding_tax",
               "number_available", "product_description", "category", "review_rating", "image_url"]
 
-    with open(path_csv,"w", newline='',encoding="utf-32") as csv_file:
+    with open(path_csv, "w", newline='', encoding="utf-32") as csv_file:
         writer = csv.writer(csv_file, delimiter=",")
         writer.writerow(header)
 
@@ -173,54 +173,54 @@ for m in range(nb_cat):
             # alreay known, stored in product_page_url
 
             # universal_product_code(upc)
-            universal_product_code = (td[0].string)
+            universal_product_code = td[0].string
 
             # title
             ## title stored on the first class active found
             title = (soup.find("li", class_="active"))
-            title = (title.string)
+            title = title.string
 
             # price_including_tax
-            price_including_tax = (td[3].string)
+            price_including_tax = td[3].string
 
             # price_excluding_tax
-            price_excluding_tax = (td[2].string)
+            price_excluding_tax = td[2].string
 
             # number_available
-            number_available = (td[5].string)
-            number_available = (number_available.replace("In stock (","")).replace(" available)", "")
+            number_available = td[5].string
+            number_available = (number_available.replace("In stock (", "")).replace(" available)", "")
 
             # product_description
-            desc = soup.find("meta", attrs={"name":"description"})
+            desc = soup.find("meta", attrs={"name": "description"})
             # ";" removing for opening CSV
-            desc=(str(desc).replace("&quot;","")).replace(";",",")
-            product_description=desc[20:-31]
+            desc = (str(desc).replace("&quot;", "")).replace(";", ",")
+            product_description = desc[20:-31]
 
             # category
-            # alreay known, stored in main_categories[index]
+            # already known, stored in main_categories[index]
             ## looking for "category/books/" on ahref list
 
             # review_rating
-            review_rating = (td[6].string)
+            review_rating = td[6].string
 
             # image_url
             ## find class item active (only one on all the html)
             ## and looking for img url by searching ../../ at the beginning and jpg at the end
             image = str(soup.find(class_="item active"))
             pos1 = image.find("../../") + 6
-            pos2 = image.find("jpg",pos1) + 3
-            image_url = ("http://books.toscrape.com/" + (image[pos1 : pos2]))
+            pos2 = image.find("jpg", pos1) + 3
+            image_url = ("http://books.toscrape.com/" + (image[pos1: pos2]))
 
             # downloading image file
-            img = requests.get(image_url, stream = True)
-            title = title.replace(":"," ").replace("'"," ").replace("*",".").replace("/","-").replace('"','-').replace("?",".").replace(","," ") # replace special caracters incompatible with name file
-            image_ext = image_url[-4:] # to keep the same extension in cas of other image format (bmp or other)
-            with open(os.path.join(img_folder,title + image_ext), 'wb') as img_file:
+            img = requests.get(image_url, stream=True)
+            title = title.replace(":", " ").replace("'", " ").replace("*", ".").replace("/", "-").replace('"', '-').replace("?", ".").replace(",", " ")  # replace special caracters incompatible with name file
+            image_ext = image_url[-4:]  # to keep the same extension in cas of other image format (bmp or other)
+            with open(os.path.join(img_folder, title + image_ext), 'wb') as img_file:
                 shutil.copyfileobj(img.raw, img_file)
                 img_file.close()
 
 
-            line=[product_page_url,universal_product_code,title,price_including_tax,price_excluding_tax,number_available,product_description,main_categories[index],review_rating,image_url]
+            line = [product_page_url, universal_product_code, title, price_including_tax, price_excluding_tax, number_available, product_description, main_categories[index], review_rating, image_url]
             writer.writerow(line)
 
         csv_file.close()
@@ -231,6 +231,5 @@ if nb_cat == 1:
     print('''Fin de l'extraction, vous pouvez consulter le fichiers CSV horodaté à la date du jour dans le dossier CSVs\nainsi que les images de couvertures associées dans "''' + main_categories[index - 1] + '".')
     print("Temps de traitement : " + str(datetime.datetime.now() - now))
 else:
-    print("Fin de l'extraction, vous pouvez consulter les fichiers CSV horodatés à la date du jour ainsi que les images \nde couvertures dans chaques dossiers categorie.")
+    print("Fin de l'extraction, vous pouvez consulter les fichiers CSV horodatés à la date du jour ainsi que les images \nde couvertures dans chaque dossiers catégorie.")
     print("Temps de traitement : " + str(datetime.datetime.now() - now))
-
