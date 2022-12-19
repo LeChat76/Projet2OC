@@ -6,7 +6,7 @@ This script download all data stored in "Books to Scrape" e-shoop.
 "git clone https://github.com/LeChat76/Projet2OC.git"
 "cd Projet2OC"
 Create virtual environment :
-* "python -m venv scrape"
+* "python -m venv .env"
 * activate environment :
     * for Linux "source .env/bin/action"
     * for Windows ".\.env\Scripts\activate.bat"
