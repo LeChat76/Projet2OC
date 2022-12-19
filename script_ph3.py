@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+def import_all_products(main_url, img_download):
 
-from script_ph2 import import_all_products_infos_cat
-import requests
-from bs4 import BeautifulSoup
-def import_all_products(main_url):
+    import requests
+    from bs4 import BeautifulSoup
+    from script_ph2 import import_all_products_cat
 
     # main_url = "http://books.toscrape.com/"
     main_page = requests.get(main_url)
@@ -31,4 +31,4 @@ def import_all_products(main_url):
             main_categories.append(cat)
 
     for category in main_categories:
-        import_all_products_infos_cat(category)
+        import_all_products_cat(category, img_download)

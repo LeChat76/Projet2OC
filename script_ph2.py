@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-def import_all_products_infos_cat(main_categories):
+def import_all_products_cat(main_categories, img_download):
 
     from script_ph1 import import_product_info
     import requests
@@ -15,14 +15,6 @@ def import_all_products_infos_cat(main_categories):
     now = datetime.datetime.now()
     date_time = now.strftime("%d%m%Y_%H%M%S")
 
-    # print("Requesting URL " + main_url)
-    '''
-    if main_page.status_code != 200:
-        print("Serveur injoignable")
-        exit()
-    else:
-        print("Accès serveur OK")
-    '''
     main_page_soup = BeautifulSoup(main_page.content, 'html.parser')
 
     main_li = main_page_soup.find_all("li")
@@ -34,7 +26,7 @@ def import_all_products_infos_cat(main_categories):
             pos2 = str(li).find(".html") + 5
             main_url_category = "http://books.toscrape.com/" + (str(li)[pos1:pos2])
 
-    pages = 1
+    # pages = 1
 
     page = requests.get(main_url_category)
 
@@ -66,7 +58,7 @@ def import_all_products_infos_cat(main_categories):
         next_category_page_name = str(soup.find("li", class_="next"))
         if next_category_page_name != "None":
             pos1 = next_category_page_name.find("href=") + 6
-            pos2 = next_category_page_name.find(">next") -1
+            pos2 = next_category_page_name.find(">next") - 1
             next_category_page_name = next_category_page_name[pos1:pos2]
             next_category_page_url = main_url_category.replace("index.html", next_category_page_name)
             page = requests.get(next_category_page_url)
@@ -74,6 +66,6 @@ def import_all_products_infos_cat(main_categories):
             page.status_code = 404
 
     for product in list_products_url:
-        import_product_info(product, main_categories, date_time)
+        import_product_info(product, main_categories, date_time, img_download)
 
     list_products_url.clear()

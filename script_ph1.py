@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-def import_product_info(product_page_url, category, date_time):
+def import_product_info(product_page_url, category, date_time, img_download):
 
     import requests
     from bs4 import BeautifulSoup
@@ -93,6 +93,5 @@ def import_product_info(product_page_url, category, date_time):
         line = [product_page_url, universal_product_code, title, price_including_tax, price_excluding_tax, number_available, product_description, category, review_rating, image_url]
         writer.writerow(line)
     csv_file.close()
-
-    download_img_product(product_page_url, title, category)
-
+    if img_download.upper() == "Y":
+        download_img_product(product_page_url, title, category)
