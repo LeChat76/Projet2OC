@@ -8,8 +8,8 @@ This script download all data stored in "Books to Scrape" e-shoop.
 Create virtual environment :
 * "python -m venv .env"
 * activate environment :
-    * for Linux "source .env/bin/action"
-    * for Windows ".\.env\Scripts\activate.bat"
+    * for Linux "source .env/bin/activate"
+    * for Windows ".\.env\Scripts\activate"
 Install all needed libraries by typing : "pip install -r requirements.txt"
 ```
 ## Execution
