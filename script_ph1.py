@@ -88,7 +88,10 @@ def import_product_info(product_page_url, category, date_time, img_download):
         image_url = ("http://books.toscrape.com/" + (image[pos1: pos2]))
 
         # review_rating
-        review_rating = td[6].string
+        review_rating = str(soup.find("p", class_="star-rating"))
+        pos1 = review_rating.find("star-rating") + 12
+        pos2 = review_rating.find(">") - 1
+        review_rating = review_rating[pos1: pos2]
 
         line = [product_page_url, universal_product_code, title, price_including_tax, price_excluding_tax, number_available, product_description, category, review_rating, image_url]
         writer.writerow(line)

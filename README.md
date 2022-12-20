@@ -14,7 +14,7 @@ Install all needed libraries by typing : "pip install -r requirements.txt"
 ```
 ## Execution
 ```sh
-Simply launch the script by typing "py script2.py" and follow instruction :
+Simply launch the script by typing "py script.py" and follow instruction :
 * First : select all categories (t) or just one (s)
 * Then : select to download images files or not (to exporte quickly)
 ```
