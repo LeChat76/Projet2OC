@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
-
+from script_ph1 import import_product_info
+import requests
+from bs4 import BeautifulSoup
+import datetime
 def import_all_products_cat(main_categories, img_download):
-
-    from script_ph1 import import_product_info
-    import requests
-    from bs4 import BeautifulSoup
-    import datetime
 
     main_url = "http://books.toscrape.com/"
     main_page = requests.get(main_url)
     list_products_url = []
     next_category_page_url = ""
-    # main_categories = "Women Fiction"
     now = datetime.datetime.now()
     date_time = now.strftime("%d%m%Y_%H%M%S")
 
@@ -30,12 +27,12 @@ def import_all_products_cat(main_categories, img_download):
 
     page = requests.get(main_url_category)
 
-    print("(ph2a) Requesting URL " + main_url_category)
+    print("Requesting URL " + main_url_category)
 
     while page.status_code == 200:
 
         if next_category_page_url:
-            print("(ph2b) Requesting URL " + next_category_page_url)
+            print("Requesting URL " + next_category_page_url)
 
         if page.status_code != 200:
             print("Serveur injoignable")

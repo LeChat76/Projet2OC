@@ -1,19 +1,15 @@
-# def download_image_product(img_url):
+import requests
+from bs4 import BeautifulSoup
+import os
+import shutil
 def download_img_product(product_page_url, title, category):
 
-    import requests
-    from bs4 import BeautifulSoup
-    import os
-    import shutil
-
-    # product_page_url = "http://books.toscrape.com/catalogue/its-only-the-himalayas_981/index.html"
-    # title = "its only Himalaya"
     product_page = requests.get(product_page_url)
     soup_img = BeautifulSoup(product_page.content, 'html.parser')
 
     # image_url
-    ## find class item active (only one on all the html)
-    ## and looking for img url by searching ../../ at the beginning and jpg at the end
+    # find class item active (only one on all the html)
+    # and looking for img url by searching ../../ at the beginning and jpg at the end
     image = str(soup_img.find(class_="item active"))
     pos1 = image.find("../../") + 6
     pos2 = image.find("jpg", pos1) + 3

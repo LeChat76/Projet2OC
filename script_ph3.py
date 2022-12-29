@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
+import requests
+from bs4 import BeautifulSoup
+from script_ph2 import import_all_products_cat
 def import_all_products(main_url, img_download):
 
-    import requests
-    from bs4 import BeautifulSoup
-    from script_ph2 import import_all_products_cat
-
-    # main_url = "http://books.toscrape.com/"
     main_page = requests.get(main_url)
 
     print("Requesting URL " + main_url)
