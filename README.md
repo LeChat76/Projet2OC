@@ -1,6 +1,6 @@
 # Scraping of http://books.toscrape.com library shop
 ## _Project 2 OpenClassRooms_
-This script download all data stored in "Books to Scrape" e-shope.
+This script download all data stored in "Books to Scrape" e-shop.
 ## Installation
 ```sh
 "git clone https://github.com/LeChat76/Projet2OC.git"
